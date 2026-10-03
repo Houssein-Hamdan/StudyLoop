@@ -34,6 +34,6 @@ import { UserTopicProgressRepository } from './repositories/user-topic-progress.
       useClass: UserTopicProgressRepository,
     },
   ],
-  exports: [ProgressService, PROGRESS_REPOSITORY],
+  exports: [ProgressService, PROGRESS_REPOSITORY,USER_TOPIC_PROGRESS_REPOSITORY],
 })
 export class ProgressModule {}

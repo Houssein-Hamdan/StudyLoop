@@ -10,6 +10,8 @@ type TopicSidebarProps = {
   onTopicClick: (topicId: string) => void;
   onAnnotationClick: (topicId: string) => void;
   onAddTopic?: () => void;
+  onEditTopic: (topic: Topic) => void;
+  onDeleteTopic: (topic: Topic) => void;
 };
 
 export default function TopicSidebar({
@@ -20,6 +22,8 @@ export default function TopicSidebar({
   onTopicClick,
   onAnnotationClick,
   onAddTopic,
+  onEditTopic,
+  onDeleteTopic
 }: TopicSidebarProps) {
   const completedCount = topics.filter((topic) =>
     completedTopicIds.has(topic.id),
@@ -110,6 +114,8 @@ export default function TopicSidebar({
                   annotationCount={annotationCount}
                   onClick={() => onTopicClick(topic.id)}
                   onAnnotationClick={() => onAnnotationClick(topic.id)}
+                  onEdit={() => onEditTopic(topic)}
+                  onDelete={() => onDeleteTopic(topic)}
                 />
               );
             })}

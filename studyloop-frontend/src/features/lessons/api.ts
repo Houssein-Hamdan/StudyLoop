@@ -58,3 +58,34 @@ export async function getLesson(containerId: string, lessonId: string) {
 
   return response.data.lesson ?? response.data;
 }
+
+export type UpdateTopicPayload = {
+  title?: string;
+  description?: string | null;
+};
+
+export async function updateTopic(
+  containerId: string,
+  lessonId: string,
+  topicId: string,
+  payload: UpdateTopicPayload,
+) {
+  const response = await apiClient.put(
+    `/containers/${containerId}/lessons/${lessonId}/topics/${topicId}`,
+    payload,
+  );
+
+  return response.data;
+}
+
+export async function deleteTopic(
+  containerId: string,
+  lessonId: string,
+  topicId: string,
+) {
+  const response = await apiClient.delete(
+    `/containers/${containerId}/lessons/${lessonId}/topics/${topicId}`,
+  );
+
+  return response.data;
+}

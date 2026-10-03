@@ -8,11 +8,13 @@ import { LESSON_REPOSITORY } from './repositories/lesson.repository.interface.js
 import { TOPIC_REPOSITORY } from './repositories/topic.repository.interface.js';
 import { CONTAINER_REPOSITORY } from '../container/repositories/container.repository.interface.js';
 import { PROGRESS_REPOSITORY } from '../progress/repositories/progress.repository.interface.js';
+import { USER_TOPIC_PROGRESS_REPOSITORY } from '../progress/repositories/user-topic-progress.repository.interface.js';
 import { GeminiService } from '../gemini/gemini.service.js';
 
 import type { ILessonRepository } from './repositories/lesson.repository.interface.js';
 import type { ITopicRepository } from './repositories/topic.repository.interface.js';
 import type { IContainerRepository } from '../container/repositories/container.repository.interface.js';
+import type { IUserTopicProgressRepository } from '../progress/repositories/user-topic-progress.repository.interface.js';
 import type { IProgressRepository } from '../progress/repositories/progress.repository.interface.js';
 import {
   LessonNotFoundException,
@@ -36,6 +38,9 @@ export class LessonService {
 
     @Inject(PROGRESS_REPOSITORY)
     private readonly progressRepository: IProgressRepository,
+
+    @Inject(USER_TOPIC_PROGRESS_REPOSITORY)
+    private readonly userTopicProgressRepository: IUserTopicProgressRepository,
 
     private readonly geminiService: GeminiService,
   ) {}
@@ -367,10 +372,46 @@ export class LessonService {
       throw new TopicNotFoundException();
     }
 
+    // Check whether this topic was completed by the user
+    const topicProgress =
+      await this.userTopicProgressRepository.findByUserAndTopic(
+        userId,
+        topicId,
+      );
+
+    const wasCompleted = topicProgress?.isCompleted ?? false;
+
     const deleted = await this.topicRepository.delete(topicId);
 
     if (!deleted) {
       throw new TopicNotFoundException();
+    }
+
+    // Update the user's lesson progress
+    const progress = await this.progressRepository.findByUserAndLesson(
+      userId,
+      lessonId,
+    );
+
+    if (progress) {
+      const totalTopicsCount = Math.max(progress.totalTopicsCount - 1, 0);
+
+      const completedTopicsCount = wasCompleted
+        ? Math.max(progress.completedTopicsCount - 1, 0)
+        : progress.completedTopicsCount;
+
+      const completionPercentage =
+        totalTopicsCount > 0
+          ? Math.round((completedTopicsCount / totalTopicsCount) * 100)
+          : 0;
+
+      await this.progressRepository.update(progress.id, {
+        totalTopicsCount,
+        completedTopicsCount,
+        completionPercentage,
+        isLessonCompleted:
+          totalTopicsCount > 0 && completedTopicsCount === totalTopicsCount,
+      });
     }
 
     return {

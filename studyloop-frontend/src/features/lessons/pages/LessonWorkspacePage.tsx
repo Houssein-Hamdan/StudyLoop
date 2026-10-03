@@ -15,10 +15,10 @@ export function LessonWorkspacePage() {
   const [selectedTopicId, setSelectedTopicId] = useState<string | null>(null);
 
   const lessonQuery = useLesson(containerId ?? "", lessonId ?? "");
-  
+
   const progressQuery = useOrCreateLessonProgress(
     containerId ?? "",
-    lessonId ?? ""
+    lessonId ?? "",
   );
 
   const lesson = lessonQuery.data;
@@ -42,9 +42,7 @@ export function LessonWorkspacePage() {
     if (!Array.isArray(list)) return new Set();
 
     return new Set(
-      list
-        .filter((t) => t.isCompleted)
-        .map((t) => t.topicId || t.id)
+      list.filter((t) => t.isCompleted).map((t) => t.topicId || t.id),
     );
   }, [progressQuery.data?.topicProgress]);
 
@@ -96,9 +94,11 @@ export function LessonWorkspacePage() {
         topicsCount={topics.length}
       />
 
-      <LessonProgress 
-        completedTopics={progress?.completedTopicsCount ?? completedTopicIds.size} 
-        totalTopics={progress?.totalTopicsCount ?? topics.length} 
+      <LessonProgress
+        completedTopics={
+          progress?.completedTopicsCount ?? completedTopicIds.size
+        }
+        totalTopics={progress?.totalTopicsCount ?? topics.length}
       />
 
       {topics.length === 0 ? (
@@ -113,11 +113,13 @@ export function LessonWorkspacePage() {
           <TopicSidebar
             topics={topics}
             activeTopicId={activeTopicId}
-            completedTopicIds={completedTopicIds} 
+            completedTopicIds={completedTopicIds}
             annotations={[]}
             onTopicClick={setSelectedTopicId}
             onAnnotationClick={() => {}}
             onAddTopic={() => {}}
+            onEditTopic={() => {}}
+            onDeleteTopic={() => {}}
           />
 
           <TopicContent topic={selectedTopic} />

@@ -8,6 +8,8 @@ import {
   parseRawContent,
   type CreateLessonPayload,
   type CreateTopicPayload,
+  updateTopic,
+  deleteTopic,
 } from "../api";
 import { progressKeys } from "../../progress/hooks/useProgress";
 
@@ -86,5 +88,47 @@ export function useParseRawContent() {
       containerId: string;
       rawContent: string;
     }) => parseRawContent(containerId, rawContent),
+  });
+}
+
+export function useUpdateTopic(containerId: string, lessonId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      topicId,
+      payload,
+    }: {
+      topicId: string;
+      payload: {
+        title?: string;
+        description?: string | null;
+      };
+    }) => updateTopic(containerId, lessonId, topicId, payload),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: lessonKeys.detail(containerId, lessonId),
+      });
+    },
+  });
+}
+
+export function useDeleteTopic(containerId: string, lessonId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (topicId: string) =>
+      deleteTopic(containerId, lessonId, topicId),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: lessonKeys.detail(containerId, lessonId),
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: progressKeys.lesson(containerId, lessonId),
+      });
+    },
   });
 }
