@@ -68,7 +68,7 @@ export default function HomePage() {
 
   const activity = activityQuery.data ?? [];
 
-  const reviews = reviewsQuery.data ?? [];
+  const reviews = reviewsQuery.data?.reviews ?? [];
 
   if (!stats) {
     return null;
@@ -100,7 +100,11 @@ export default function HomePage() {
         <ContinueLearning lessons={activity} />
 
         <ReviewDue
-          reviews={Array.isArray(reviews) ? reviews : reviews?.reviews}
+          reviews={reviews.map((review) => ({
+            lessonId: review.lesson.id,
+            containerId: review.lesson.containerId,
+            lessonTitle: review.lesson.title,
+          }))}
         />
       </div>
 
