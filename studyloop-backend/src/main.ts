@@ -12,7 +12,7 @@ async function bootstrap() {
     origin: [
       'http://localhost:5173',
       'http://localhost:3000',
-      'https://study-loop-ten.vercel.app',
+      'https://study-loop-kguvhhu28-hamdan13.vercel.app/auth/login',
     ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
