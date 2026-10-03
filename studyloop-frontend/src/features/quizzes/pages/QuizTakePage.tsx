@@ -33,7 +33,6 @@ export function QuizTakePage() {
 
   const quiz = quizQuery.data?.quiz;
 
-  // حفظ مرجع الأسئلة لمنع إعادة الحساب غير الضرورية
   const questions = useMemo<QuizQuestion[]>(() => {
     return quiz?.questions ?? [];
   }, [quiz?.questions]);

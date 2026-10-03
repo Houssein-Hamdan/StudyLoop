@@ -30,7 +30,6 @@ export function SummaryPage() {
 
   const lesson = lessonQuery.data;
 
-  // حفظ الـ topics وتحديد النوع بشكل صريح
   const topics = useMemo<Topic[]>(() => {
     return (lesson?.topics as Topic[]) ?? [];
   }, [lesson?.topics]);

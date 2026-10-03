@@ -6,7 +6,7 @@ import {
   updateLessonProgress,
   updateTopicProgress,
 } from "../api";
-import type { LessonProgressResponse } from "../types"; // استيراد الـ Type المطلوب
+import type { LessonProgressResponse } from "../types"; 
 
 export const progressKeys = {
   all: ["progress"] as const,
@@ -69,7 +69,6 @@ export function useUpdateLessonProgress(containerId: string, lessonId: string) {
       updateLessonProgress(containerId, lessonId, payload),
 
     onSuccess: (response) => {
-      // إعطاء النوع LessonProgressResponse هنا أيضاً
       queryClient.setQueryData<LessonProgressResponse>(
         queryKey,
         (currentData) => {

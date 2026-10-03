@@ -16,7 +16,6 @@ export type LessonProgress = {
   scrollPosition: number;
   isLessonCompleted: boolean;
 
-  // Review / Spaced Repetition
   lastReviewedAt: string | null;
   nextReviewDate: string | null;
   reviewCount: number;

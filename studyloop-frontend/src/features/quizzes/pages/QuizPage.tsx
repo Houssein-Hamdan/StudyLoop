@@ -31,7 +31,6 @@ export function QuizPage() {
 
   const lesson = lessonQuery.data;
 
-  // حفظ الـ topics وتحديد نوعها لمنع أخطاء Typescript و Render
   const topics = useMemo<Topic[]>(() => {
     return (lesson?.topics as Topic[]) ?? [];
   }, [lesson?.topics]);

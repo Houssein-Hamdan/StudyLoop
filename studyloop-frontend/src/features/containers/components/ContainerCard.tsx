@@ -13,7 +13,6 @@ export function ContainerCard({ container }: ContainerCardProps) {
       to={`/containers/${container.id}`}
       className="group block rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 transition hover:-translate-y-0.5 hover:border-[var(--primary)]/40 hover:shadow-lg sm:p-5"
     >
-      {/* Header Section: Icon + Title + Chevron bi-nafs el-satr bil-mobile */}
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--primary)]/10 text-[var(--primary)] sm:h-11 sm:w-11">

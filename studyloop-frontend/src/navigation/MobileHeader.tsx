@@ -6,7 +6,6 @@ export function MobileHeader() {
   const { theme, toggleTheme } = useTheme();
 
   return (
-    // 👇 Zidna `sticky top-0 z-40` krmal ydal sebet faw2 lama te3mal scroll
     <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-[var(--border)] bg-[var(--surface)] px-4 md:hidden">
       {/* Title */}
       <h1 className="text-lg font-bold tracking-tight">StudyLoop</h1>

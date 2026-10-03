@@ -32,7 +32,6 @@ export function LibraryPage() {
         </div>
 
         <div className="flex items-center gap-3">
-          {/* رابط البحث الذي ينتقل إلى صفحة البحث */}
           <Link
             to="/search"
             className="flex items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2.5 text-sm text-[var(--muted)] transition-colors hover:bg-[var(--surface-hover)] hover:text-[var(--foreground)]"

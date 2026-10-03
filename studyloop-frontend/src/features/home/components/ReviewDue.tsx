@@ -7,7 +7,6 @@ export type ReviewDueItem = {
   lessonTitle: string;
 };
 
-// يتقبل إما Array بشكل مباشر أو Object يحتوي على القائمة (DueReviewsResponse)
 type ReviewDueProps = {
   reviews: ReviewDueItem[] | { reviews?: ReviewDueItem[]; items?: ReviewDueItem[] } | undefined;
 };
@@ -15,7 +14,6 @@ type ReviewDueProps = {
 export default function ReviewDue({
   reviews,
 }: ReviewDueProps) {
-  // استخراج قائمة المراجعات بسلاسة
   const reviewList = Array.isArray(reviews)
     ? reviews
     : reviews?.reviews || reviews?.items || [];

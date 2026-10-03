@@ -33,7 +33,6 @@ export function LessonPage() {
   const lessonQuery = useLesson(containerId ?? "", lessonId ?? "");
   const lesson = lessonQuery.data;
 
-  // 1. تعريف topics
   const topics = useMemo<Topic[]>(() => {
     return (lesson?.topics as Topic[]) ?? [];
   }, [lesson?.topics]);

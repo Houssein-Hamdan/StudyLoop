@@ -72,7 +72,6 @@ export function StructuredLessonForm({
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    // التعديل المطلوب يقع هنا مباشرة:
     const cleanTopics = topics
       .filter((topic) => topic.title.trim())
       .map((topic) => ({

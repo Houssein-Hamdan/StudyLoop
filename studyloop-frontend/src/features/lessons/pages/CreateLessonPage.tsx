@@ -40,13 +40,6 @@ export function CreateLessonPage() {
         payload,
       });
 
-      /*
-       * We do not assume the exact response shape.
-       *
-       * The backend may return:
-       * { lesson: {...} }
-       * or the lesson object directly.
-       */
       const createdLesson = lesson?.lesson ?? lesson;
 
       if (createdLesson?.id) {

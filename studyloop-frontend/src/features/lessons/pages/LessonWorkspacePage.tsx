@@ -16,7 +16,6 @@ export function LessonWorkspacePage() {
 
   const lessonQuery = useLesson(containerId ?? "", lessonId ?? "");
   
-  // 👈 جلب بيانات التقدم
   const progressQuery = useOrCreateLessonProgress(
     containerId ?? "",
     lessonId ?? ""
@@ -38,7 +37,6 @@ export function LessonWorkspacePage() {
     return topics.find((topic) => topic.id === activeTopicId) ?? null;
   }, [topics, activeTopicId]);
 
-  // 👈 حساب قائمة الـ Topics المكتملة لصفحة Workspace
   const completedTopicIds = useMemo<Set<string>>(() => {
     const list = progressQuery.data?.topicProgress;
     if (!Array.isArray(list)) return new Set();
@@ -98,7 +96,6 @@ export function LessonWorkspacePage() {
         topicsCount={topics.length}
       />
 
-      {/* 👈 تحسين إظهار الـ Progress الحقيقي */}
       <LessonProgress 
         completedTopics={progress?.completedTopicsCount ?? completedTopicIds.size} 
         totalTopics={progress?.totalTopicsCount ?? topics.length} 

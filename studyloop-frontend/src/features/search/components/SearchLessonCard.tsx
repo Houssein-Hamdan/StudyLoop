@@ -10,7 +10,6 @@ type SearchLessonCardProps = {
 export default function SearchLessonCard({
   lesson,
 }: SearchLessonCardProps) {
-  // استخراج الـ UUID الصحيح للـ Container
   const containerId = lesson.containerId || lesson.container?.id;
 
   return (
