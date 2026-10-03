@@ -13,6 +13,7 @@ async function bootstrap() {
       'http://localhost:5173',
       'http://localhost:3000',
       'https://study-loop-kguvhhu28-hamdan13.vercel.app',
+      'https://study-loop-ten.vercel.app/'
     ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
