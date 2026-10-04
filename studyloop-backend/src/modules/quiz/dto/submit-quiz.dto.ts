@@ -4,8 +4,9 @@ import {
   ValidateNested,
   IsUUID,
   ArrayMinSize,
-  IsString
+  IsString,
 } from 'class-validator';
+
 import { Type } from 'class-transformer';
 
 export class QuizAnswerDto {
@@ -19,10 +20,6 @@ export class QuizAnswerDto {
 }
 
 export class SubmitQuizDto {
-  @IsUUID('4')
-  @IsNotEmpty({ message: 'Quiz ID is required' })
-  quizId: string;
-
   @IsArray()
   @ArrayMinSize(1)
   @ValidateNested({ each: true })

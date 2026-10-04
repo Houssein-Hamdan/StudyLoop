@@ -201,7 +201,7 @@ ${rawText}`;
           await new Promise((resolve) => setTimeout(resolve, delay));
           delay *= 2;
         } else {
-          throw error;
+          throw new AIResponseFailedException();
         }
       }
     }
