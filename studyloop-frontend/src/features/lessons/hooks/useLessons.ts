@@ -11,12 +11,15 @@ import {
   updateTopic,
   deleteTopic,
 } from "../api";
+
 import { progressKeys } from "../../progress/hooks/useProgress";
+import { homeKeys } from "../../home/hooks/useHome";
 
 export const lessonKeys = {
   all: ["lessons"] as const,
 
-  list: (containerId: string) => ["lessons", "list", containerId] as const,
+  list: (containerId: string) =>
+    ["lessons", "list", containerId] as const,
 
   detail: (containerId: string, lessonId: string) =>
     ["lessons", "detail", containerId, lessonId] as const,
@@ -30,11 +33,23 @@ export function useLessons(containerId: string) {
   });
 }
 
-export function useLesson(containerId: string, lessonId: string) {
+export function useLesson(
+  containerId: string,
+  lessonId: string,
+) {
   return useQuery({
-    queryKey: lessonKeys.detail(containerId, lessonId),
-    queryFn: () => getLesson(containerId, lessonId),
-    enabled: Boolean(containerId) && Boolean(lessonId),
+    queryKey: lessonKeys.detail(
+      containerId,
+      lessonId,
+    ),
+    queryFn: () =>
+      getLesson(
+        containerId,
+        lessonId,
+      ),
+    enabled:
+      Boolean(containerId) &&
+      Boolean(lessonId),
   });
 }
 
@@ -48,31 +63,77 @@ export function useCreateLesson() {
     }: {
       containerId: string;
       payload: CreateLessonPayload;
-    }) => createLesson(containerId, payload),
+    }) =>
+      createLesson(
+        containerId,
+        payload,
+      ),
 
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: lessonKeys.list(variables.containerId),
-      });
+    onSuccess: async (_, variables) => {
+      await Promise.all([
+        // Update container lessons
+        queryClient.invalidateQueries({
+          queryKey: lessonKeys.list(
+            variables.containerId,
+          ),
+        }),
+
+        // Update Home statistics
+        queryClient.invalidateQueries({
+          queryKey: homeKeys.stats,
+        }),
+
+        // Update Home recent activity
+        queryClient.invalidateQueries({
+          queryKey: homeKeys.activity,
+        }),
+      ]);
     },
   });
 }
 
-export function useCreateTopic(containerId: string, lessonId: string) {
+export function useCreateTopic(
+  containerId: string,
+  lessonId: string,
+) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (payload: CreateTopicPayload) =>
-      createTopic(containerId, lessonId, payload),
+    mutationFn: (
+      payload: CreateTopicPayload,
+    ) =>
+      createTopic(
+        containerId,
+        lessonId,
+        payload,
+      ),
 
     onSuccess: async () => {
       await Promise.all([
+        // Update current lesson
         queryClient.invalidateQueries({
-          queryKey: lessonKeys.detail(containerId, lessonId),
+          queryKey: lessonKeys.detail(
+            containerId,
+            lessonId,
+          ),
         }),
 
+        // Update lesson progress
         queryClient.invalidateQueries({
-          queryKey: progressKeys.lesson(containerId, lessonId),
+          queryKey: progressKeys.lesson(
+            containerId,
+            lessonId,
+          ),
+        }),
+
+        // Update Home statistics
+        queryClient.invalidateQueries({
+          queryKey: homeKeys.stats,
+        }),
+
+        // Update Home recent activity
+        queryClient.invalidateQueries({
+          queryKey: homeKeys.activity,
         }),
       ]);
     },
@@ -87,11 +148,18 @@ export function useParseRawContent() {
     }: {
       containerId: string;
       rawContent: string;
-    }) => parseRawContent(containerId, rawContent),
+    }) =>
+      parseRawContent(
+        containerId,
+        rawContent,
+      ),
   });
 }
 
-export function useUpdateTopic(containerId: string, lessonId: string) {
+export function useUpdateTopic(
+  containerId: string,
+  lessonId: string,
+) {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -104,31 +172,77 @@ export function useUpdateTopic(containerId: string, lessonId: string) {
         title?: string;
         description?: string | null;
       };
-    }) => updateTopic(containerId, lessonId, topicId, payload),
+    }) =>
+      updateTopic(
+        containerId,
+        lessonId,
+        topicId,
+        payload,
+      ),
 
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: lessonKeys.detail(containerId, lessonId),
-      });
+    onSuccess: async () => {
+      await Promise.all([
+        // Update current lesson
+        queryClient.invalidateQueries({
+          queryKey: lessonKeys.detail(
+            containerId,
+            lessonId,
+          ),
+        }),
+
+        // Update Home recent activity
+        queryClient.invalidateQueries({
+          queryKey: homeKeys.activity,
+        }),
+      ]);
     },
   });
 }
 
-export function useDeleteTopic(containerId: string, lessonId: string) {
+export function useDeleteTopic(
+  containerId: string,
+  lessonId: string,
+) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (topicId: string) =>
-      deleteTopic(containerId, lessonId, topicId),
+    mutationFn: (
+      topicId: string,
+    ) =>
+      deleteTopic(
+        containerId,
+        lessonId,
+        topicId,
+      ),
 
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: lessonKeys.detail(containerId, lessonId),
-      });
+    onSuccess: async () => {
+      await Promise.all([
+        // Update current lesson
+        queryClient.invalidateQueries({
+          queryKey: lessonKeys.detail(
+            containerId,
+            lessonId,
+          ),
+        }),
 
-      queryClient.invalidateQueries({
-        queryKey: progressKeys.lesson(containerId, lessonId),
-      });
+        // Update lesson progress
+        queryClient.invalidateQueries({
+          queryKey: progressKeys.lesson(
+            containerId,
+            lessonId,
+          ),
+        }),
+
+        // Update Home statistics
+        queryClient.invalidateQueries({
+          queryKey: homeKeys.stats,
+        }),
+
+        // Update Home recent activity
+        queryClient.invalidateQueries({
+          queryKey: homeKeys.activity,
+        }),
+      ]);
     },
   });
 }

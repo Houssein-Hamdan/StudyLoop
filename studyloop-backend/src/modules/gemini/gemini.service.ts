@@ -1,15 +1,22 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { GoogleGenerativeAI, SchemaType } from '@google/generative-ai';
 import { geminiConfig } from '../../config/gemini.config.js';
+import {
+  AIResponseFailedException,
+  QuizGenerationFailedException,
+  SummarizationFailedException,
+} from '../../exceptions/auth.exceptions.js'; 
 
 export interface TopicContext {
   title: string;
   description?: string;
 }
+
 export interface ParsedTopic {
   title: string;
-  description: string|null;
+  description: string | null;
 }
+
 @Injectable()
 export class GeminiService {
   private readonly logger = new Logger(GeminiService.name);
@@ -29,7 +36,7 @@ export class GeminiService {
     depth: 'short' | 'medium' | 'detailed',
   ): Promise<string> {
     const topicsText = topics
-      .map((t) => `- ${t.title}: ${t.description || 'N/A'}`)
+      .map((t) => `${t.title}: ${t.description || 'N/A'}`)
       .join('\n');
 
     const prompt = `You are an educational summarizer.
@@ -38,7 +45,12 @@ ${topicsText}
 
 Instructions: Provide a ${depth} summary.`;
 
-    return this.runTextQuery(prompt);
+    try {
+      return await this.runTextQuery(prompt);
+    } catch (error) {
+      this.logger.error('Error generating summary:', error);
+      throw new SummarizationFailedException();
+    }
   }
 
   /**
@@ -51,7 +63,7 @@ Instructions: Provide a ${depth} summary.`;
     count: number,
   ): Promise<any[]> {
     const topicsText = topics
-      .map((t) => `- ${t.title}: ${t.description || 'N/A'}`)
+      .map((t) => `${t.title}: ${t.description || 'N/A'}`)
       .join('\n');
 
     const model = this.genAI.getGenerativeModel({
@@ -86,8 +98,8 @@ ${topicsText}`;
       const result = await this.generateWithRetry(model, prompt);
       return JSON.parse(result.response.text());
     } catch (error) {
-      this.logger.error('Error generating quiz', error);
-      throw error;
+      this.logger.error('Error generating quiz:', error);
+      throw new QuizGenerationFailedException();
     }
   }
 
@@ -110,21 +122,6 @@ Provide a clear, simple, concise (2-3 paragraphs max) answer with examples if ap
   }
 
   /**
-   * Helper function for standard text queries
-   */
-  private async runTextQuery(prompt: string): Promise<string> {
-    try {
-      const model = this.genAI.getGenerativeModel({
-        model: geminiConfig.model,
-      });
-      const result = await model.generateContent(prompt);
-      return result.response.text();
-    } catch (error) {
-      this.logger.error('Gemini API Error:', error);
-      throw error;
-    }
-  }
-  /**
    * Parse raw unstructured text into structured topics using Gemini
    */
   async parseUnstructuredText(rawText: string): Promise<ParsedTopic[]> {
@@ -146,8 +143,14 @@ Provide a clear, simple, concise (2-3 paragraphs max) answer with examples if ap
       },
     });
 
-    const prompt = `You are an expert content structuring assistant.
-Analyze the following unstructured text from a study lesson and break it down into logically organized topics with titles and concise descriptions.
+    const prompt = `You are a text segmentation assistant.
+Your ONLY task is to split the provided raw text into logical topics/sections WITHOUT changing, summarizing, rewording, or omitting any words.
+
+CRITICAL RULES:
+1. Preserve the EXACT wording, phrasing, and sentences from the original text in the 'description' field.
+2. DO NOT summarize, rephrase, condense, or edit the content.
+3. Every sentence from the original input must appear in one of the topic descriptions in its original order.
+4. Provide a clear, relevant 'title' for each identified section.
 
 Raw Text:
 ${rawText}`;
@@ -157,12 +160,29 @@ ${rawText}`;
       return JSON.parse(result.response.text());
     } catch (error) {
       this.logger.error('Error parsing unstructured text:', error);
-      throw error;
+      throw new AIResponseFailedException();
     }
   }
 
-  // src/modules/gemini/gemini.service.ts
+  /**
+   * Helper function for standard text queries
+   */
+  private async runTextQuery(prompt: string): Promise<string> {
+    try {
+      const model = this.genAI.getGenerativeModel({
+        model: geminiConfig.model,
+      });
+      const result = await this.generateWithRetry(model, prompt);
+      return result.response.text();
+    } catch (error) {
+      this.logger.error('Gemini API Error:', error);
+      throw new AIResponseFailedException();
+    }
+  }
 
+  /**
+   * Helper function to handle AI calls with retry logic
+   */
   private async generateWithRetry(
     model: any,
     prompt: string,
@@ -173,12 +193,13 @@ ${rawText}`;
       try {
         return await model.generateContent(prompt);
       } catch (error: any) {
-        if (error?.status === 503 && i < retries - 1) {
+        // Retry on 503 Overload or 429 Rate Limit
+        if ((error?.status === 503 || error?.status === 429) && i < retries - 1) {
           this.logger.warn(
-            `Gemini 503 Overload. Retrying in ${delay}ms... (Attempt ${i + 1}/${retries})`,
+            `Gemini transient error (${error?.status}). Retrying in ${delay}ms... (Attempt ${i + 1}/${retries})`,
           );
           await new Promise((resolve) => setTimeout(resolve, delay));
-          delay *= 2; 
+          delay *= 2;
         } else {
           throw error;
         }

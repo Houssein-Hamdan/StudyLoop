@@ -179,17 +179,26 @@ export class ProgressService {
    * @returns Overall stats
    */
   async getUserStats(userId: string) {
+    const totalLessons = await this.lessonRepository.countByUserId(userId);
+    const totalTopics = await this.topicRepository.countByUserId(userId);
+    const totalCompleted =
+      await this.topicRepository.countCompletedByUserId(userId);
+
+    const averageCompletion =
+      totalTopics > 0 ? Math.round((totalCompleted / totalTopics) * 100) : 0;
+
     const stats = await this.progressRepository.getOverallStats(userId);
+    const completedLessons = stats?.completedLessons ?? 0;
 
     return {
       message: 'User statistics retrieved successfully',
       stats: {
-        totalLessons: stats.totalLessons,
-        completedLessons: stats.completedLessons,
-        totalTopics: stats.totalTopics,
-        totalCompleted: stats.totalCompleted,
-        averageCompletion: stats.averageCompletion,
-        lessonsInProgress: stats.totalLessons - stats.completedLessons,
+        totalLessons,
+        completedLessons,
+        totalTopics,
+        totalCompleted,
+        averageCompletion,
+        lessonsInProgress: Math.max(0, totalLessons - completedLessons),
       },
     };
   }

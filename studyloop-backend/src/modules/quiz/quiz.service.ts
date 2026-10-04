@@ -30,6 +30,7 @@ import {
   UnauthorizedLessonAccessException,
   QuizNotFoundException,
   InvalidQuizScopeException,
+  QuizGenerationFailedException,
 } from '../../exceptions/auth.exceptions.js';
 
 import type { Quiz } from '../../entities/quiz.entity.js';
@@ -121,8 +122,8 @@ export class QuizService {
         createQuizDto.questionCount,
       );
 
-    if (generatedQuestions.length === 0) {
-      throw new InvalidQuizScopeException();
+    if (!generatedQuestions || generatedQuestions.length === 0) {
+      throw new QuizGenerationFailedException();
     }
 
     // Create quiz record only after AI generation succeeds
@@ -179,7 +180,6 @@ export class QuizService {
     containerId: string,
     userId: string,
   ) {
-    // Verify lesson/container ownership
     await this.verifyLessonOwnership(lessonId, containerId, userId);
 
     const quizzes = await this.quizRepository.findByLessonId(lessonId);
@@ -187,7 +187,7 @@ export class QuizService {
     return {
       message: 'Lesson quizzes retrieved successfully',
       count: quizzes.length,
-      quizzes,
+      quizzes: quizzes.map((quiz) => this.formatQuizForUser(quiz)),
     };
   }
 

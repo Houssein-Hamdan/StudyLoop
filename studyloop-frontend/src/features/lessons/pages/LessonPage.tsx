@@ -217,13 +217,6 @@ export function LessonPage() {
         />
       </div>
 
-      {/* Error Alert */}
-      {progressQuery.isError && (
-        <div className="mt-4 rounded-xl border border-[var(--danger)]/30 bg-[var(--surface)] px-4 py-3 text-sm text-[var(--danger)]">
-          Unable to load your progress.
-        </div>
-      )}
-
       {/* Content Layout using Grid */}
       <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-[260px_1fr]">
         <TopicSidebar
@@ -262,7 +255,11 @@ export function LessonPage() {
       <AddTopicModal
         isOpen={isAddTopicOpen}
         isSubmitting={createTopicMutation.isPending}
-        onClose={() => setIsAddTopicOpen(false)}
+        onClose={() => {
+          if (!createTopicMutation.isPending) {
+            setIsAddTopicOpen(false);
+          }
+        }}
         onSubmit={handleAddTopic}
       />
 

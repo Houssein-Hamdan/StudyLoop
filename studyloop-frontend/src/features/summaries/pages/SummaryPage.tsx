@@ -1,31 +1,29 @@
-import { useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useMemo, useState } from "react";
+import { useParams } from "react-router-dom";
+import { AxiosError } from "axios";
 
-import { FileText, Sparkles } from 'lucide-react';
+import { FileText, Sparkles } from "lucide-react";
 
-import { useLesson } from '../../lessons/hooks/useLessons';
-import { useCreateSummary } from '../hooks/useSummaries';
+import { useLesson } from "../../lessons/hooks/useLessons";
+import { useCreateSummary } from "../hooks/useSummaries";
 
-import type { SummaryDepth } from '../api';
-import type { Topic } from '../../lessons/types';
+import type { SummaryDepth } from "../api";
+import type { Topic } from "../../lessons/types";
 
 export function SummaryPage() {
   const { containerId, lessonId } = useParams();
 
-  const [depth, setDepth] = useState<SummaryDepth>('medium');
+  const [depth, setDepth] = useState<SummaryDepth>("medium");
 
-  const [scope, setScope] = useState<'lesson' | 'selected'>('lesson');
+  const [scope, setScope] = useState<"lesson" | "selected">("lesson");
 
   const [selectedTopicIds, setSelectedTopicIds] = useState<string[]>([]);
 
-  const lessonQuery = useLesson(
-    containerId ?? '',
-    lessonId ?? '',
-  );
+  const lessonQuery = useLesson(containerId ?? "", lessonId ?? "");
 
   const createSummaryMutation = useCreateSummary(
-    containerId ?? '',
-    lessonId ?? '',
+    containerId ?? "",
+    lessonId ?? "",
   );
 
   const lesson = lessonQuery.data;
@@ -47,13 +45,13 @@ export function SummaryPage() {
       return;
     }
 
-    if (scope === 'selected' && selectedTopicIds.length === 0) {
+    if (scope === "selected" && selectedTopicIds.length === 0) {
       return;
     }
 
     createSummaryMutation.mutate({
       depth,
-      ...(scope === 'selected' ? { selectedTopicIds } : {}),
+      ...(scope === "selected" ? { selectedTopicIds } : {}),
     });
   }
 
@@ -74,7 +72,12 @@ export function SummaryPage() {
     );
   }
 
-  const generatedSummary = createSummaryMutation.data?.summary;
+  const generatedSummary = createSummaryMutation.data;
+
+  const apiErrorMessage =
+    createSummaryMutation.error instanceof AxiosError
+      ? createSummaryMutation.error.response?.data?.message
+      : null;
 
   return (
     <div className="mx-auto w-full max-w-4xl">
@@ -100,9 +103,9 @@ export function SummaryPage() {
           <div className="mt-4 grid gap-3 sm:grid-cols-3">
             {(
               [
-                ['short', 'Short', 'Quick review'],
-                ['medium', 'Medium', 'Balanced'],
-                ['detailed', 'Detailed', 'Deep review'],
+                ["short", "Short", "Quick review"],
+                ["medium", "Medium", "Balanced"],
+                ["detailed", "Detailed", "Deep review"],
               ] as const
             ).map(([value, label, description]) => (
               <button
@@ -111,8 +114,8 @@ export function SummaryPage() {
                 onClick={() => setDepth(value)}
                 className={`rounded-xl border p-4 text-left transition ${
                   depth === value
-                    ? 'border-[var(--primary)] bg-[var(--primary)]/10'
-                    : 'border-[var(--border)] hover:bg-[var(--surface-hover)]'
+                    ? "border-[var(--primary)] bg-[var(--primary)]/10"
+                    : "border-[var(--border)] hover:bg-[var(--surface-hover)]"
                 }`}
               >
                 <p className="font-medium">{label}</p>
@@ -133,8 +136,8 @@ export function SummaryPage() {
               <input
                 type="radio"
                 name="summary-scope"
-                checked={scope === 'lesson'}
-                onChange={() => setScope('lesson')}
+                checked={scope === "lesson"}
+                onChange={() => setScope("lesson")}
               />
 
               <div>
@@ -150,8 +153,8 @@ export function SummaryPage() {
               <input
                 type="radio"
                 name="summary-scope"
-                checked={scope === 'selected'}
-                onChange={() => setScope('selected')}
+                checked={scope === "selected"}
+                onChange={() => setScope("selected")}
               />
 
               <div>
@@ -165,7 +168,7 @@ export function SummaryPage() {
           </div>
         </div>
 
-        {scope === 'selected' && (
+        {scope === "selected" && (
           <div className="mt-5 space-y-2">
             {topics.map((topic: Topic) => {
               const selected = selectedTopicIds.includes(topic.id);
@@ -177,8 +180,8 @@ export function SummaryPage() {
                   onClick={() => toggleTopic(topic.id)}
                   className={`flex w-full items-center justify-between rounded-xl border p-4 text-left transition ${
                     selected
-                      ? 'border-[var(--primary)] bg-[var(--primary)]/10'
-                      : 'border-[var(--border)] hover:bg-[var(--surface-hover)]'
+                      ? "border-[var(--primary)] bg-[var(--primary)]/10"
+                      : "border-[var(--border)] hover:bg-[var(--surface-hover)]"
                   }`}
                 >
                   <span className="text-sm font-medium">{topic.title}</span>
@@ -186,8 +189,8 @@ export function SummaryPage() {
                   <span
                     className={`h-5 w-5 rounded-md border ${
                       selected
-                        ? 'border-[var(--primary)] bg-[var(--primary)]'
-                        : 'border-[var(--border)]'
+                        ? "border-[var(--primary)] bg-[var(--primary)]"
+                        : "border-[var(--border)]"
                     }`}
                   />
                 </button>
@@ -198,7 +201,7 @@ export function SummaryPage() {
 
         {createSummaryMutation.isError && (
           <div className="mt-5 rounded-xl border border-[var(--danger)]/30 bg-[var(--danger)]/5 px-4 py-3 text-sm text-[var(--danger)]">
-            Unable to generate the summary. Please try again.
+            {apiErrorMessage || "Unable to generate the summary. Please try again."}
           </div>
         )}
 
@@ -206,7 +209,7 @@ export function SummaryPage() {
           type="button"
           disabled={
             createSummaryMutation.isPending ||
-            (scope === 'selected' && selectedTopicIds.length === 0)
+            (scope === "selected" && selectedTopicIds.length === 0)
           }
           onClick={handleGenerate}
           className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--primary)] px-5 py-3 text-sm font-semibold text-[var(--primary-foreground)] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
@@ -214,8 +217,8 @@ export function SummaryPage() {
           <Sparkles size={17} />
 
           {createSummaryMutation.isPending
-            ? 'Generating...'
-            : 'Generate Summary'}
+            ? "Generating..."
+            : "Generate Summary"}
         </button>
       </section>
 

@@ -18,6 +18,7 @@ import {
   LessonNotFoundException,
   UnauthorizedLessonAccessException,
   SummaryNotFoundException,
+  SummarizationFailedException,
 } from '../../exceptions/auth.exceptions.js';
 
 @Injectable()
@@ -90,6 +91,10 @@ export class SummaryService {
       topicsToSummarize,
       createSummaryDto.depth,
     );
+
+    if (!content || content.trim().length === 0) {
+      throw new SummarizationFailedException();
+    }
 
     const summary = await this.summaryRepository.create({
       lessonId,

@@ -193,3 +193,17 @@ function ResultStat({ label, value, icon }: ResultStatProps) {
     </div>
   );
 }
+
+
+// la la , l mashekel ma 5asa bi hol l sf7ten , krmel hek sale7on w 5aleson w b3atle yehon lal quiz result w quiz take , w shuf shu hene  l mashekel :
+
+// awal mshkle:
+
+// lama 2ekbos add topic w 2ektob li bade zido , bas 5ales w 2ekbos add , 3am yet2a5ar ktir bel adding w 3am tdal l saf7a te3et l add topic bi weje la fatra kbire shwy
+
+// tene shi : l edit wel delete topic , kena 3amlinon lal desktop ka hhover , bas 3al mobile ma fi hover lal mouse , krmel hek ma 3am ybayno l edit wel delete topic 3al mobile
+
+// telet shi : tetzakar lama 3melna select lal topic bel mobile , hala2 3am jareba , la2ayta manzu3a w shakla abyad w m8ate l sheshe , y3ne k2eno select html 3adiye , ma3 2eno jarabta 3a nes5et l laptop bas 8ayaret l width wel height, meshe 7ala , bas lama jareba 3a mobile 7a2i2e bterja3 basic select , y3ne k2eno html bas 
+
+// rabe3 sha8le : bas zid topic aw lesson , m 3m yen3akas d8re 3al home page , lezem 23mel mark as completed la shi topic , krmel ybayno l lesson wel topic bel home page, ma3 2eno bel analytics 3am ybayno w kel shi 100%
+

@@ -3,7 +3,7 @@ import { createBrowserRouter } from "react-router-dom";
 import { AppLayout } from "../layouts/AppLayout";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { Navigate } from "react-router-dom";
-import  HomePage  from "../../features/home/pages/HomePage";
+import HomePage from "../../features/home/pages/HomePage";
 import { ProfilePage } from "../../features/profile/pages/ProfilePage";
 import { SettingsPage } from "../../features/settings/pages/SettingsPage";
 import AnalyticsPage from "../../features/analytics/pages/AnalyticsPage";
@@ -22,6 +22,7 @@ import { QuizPage } from "../../features/quizzes/pages/QuizPage";
 import { AskPage } from "../../features/ask/pages/AskPage";
 import { QuizTakePage } from "../../features/quizzes/pages/QuizTakePage";
 import { ReviewSessionPage } from "../../features/reviews/pages/ReviewSessionPage";
+import { SummariesPage } from "../../features/summaries/pages/SummariesPage";
 import SearchPage from "../../features/search/pages/SearchPage";
 
 export const router = createBrowserRouter([
@@ -52,10 +53,6 @@ export const router = createBrowserRouter([
           {
             path: "/reviews",
             element: <ReviewsPage />,
-          },
-          {
-            path: "/quizzes",
-            element: <QuizzesPage />,
           },
           {
             path: "analytics",
@@ -89,6 +86,10 @@ export const router = createBrowserRouter([
           {
             path: "containers/:containerId/lessons/:lessonId/summary",
             element: <SummaryPage />,
+          },
+          {
+            path: "containers/:containerId/lessons/:lessonId/summaries",
+            element: <SummariesPage />,
           },
           {
             path: "/containers/:containerId/lessons/:lessonId/quiz",

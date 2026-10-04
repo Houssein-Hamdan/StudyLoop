@@ -1,7 +1,7 @@
-import { Check, Pencil, Trash2 } from 'lucide-react';
-import AnnotationButton from '../../annotations/components/AnnotationButton';
+import { Check, Pencil, Trash2 } from "lucide-react";
+import AnnotationButton from "../../annotations/components/AnnotationButton";
 
-import type { Topic } from '../types';
+import type { Topic } from "../types";
 
 type TopicItemProps = {
   topic: Topic;
@@ -27,11 +27,11 @@ export default function TopicItem({
   return (
     <div
       className={[
-        'group flex items-center gap-1 rounded-xl transition-colors',
+        "group flex items-center gap-1 rounded-xl transition-colors",
         isActive
-          ? 'bg-[var(--surface-hover)]'
-          : 'hover:bg-[var(--surface-hover)]',
-      ].join(' ')}
+          ? "bg-[var(--surface-hover)]"
+          : "hover:bg-[var(--surface-hover)]",
+      ].join(" ")}
     >
       <button
         type="button"
@@ -40,29 +40,37 @@ export default function TopicItem({
       >
         <div
           className={[
-            'flex h-6 w-6 shrink-0 items-center justify-center rounded-full border transition-colors',
+            "flex h-6 w-6 shrink-0 items-center justify-center rounded-full border transition-colors",
             isCompleted
-              ? 'border-[var(--success)] bg-[var(--success)] text-white'
+              ? "border-[var(--success)] bg-[var(--success)] text-white"
               : isActive
-                ? 'border-[var(--primary)]'
-                : 'border-[var(--border)]',
-          ].join(' ')}
+                ? "border-[var(--primary)]"
+                : "border-[var(--border)]",
+          ].join(" ")}
         >
           {isCompleted && <Check size={13} />}
         </div>
 
         <span
           className={[
-            'min-w-0 flex-1 truncate text-sm',
-            isActive ? 'font-medium' : 'text-[var(--muted)]',
-          ].join(' ')}
+            "min-w-0 flex-1 truncate text-sm",
+            isActive ? "font-medium" : "text-[var(--muted)]",
+          ].join(" ")}
         >
           {topic.title}
         </span>
       </button>
 
-      {/* Action Buttons (Edit / Delete) - Hover Only */}
-      <div className="flex shrink-0 items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
+      {/* Action Buttons (Edit / Delete) - Visible on mobile/active, hover-only on desktop */}
+      <div
+        className={[
+          "flex shrink-0 items-center gap-0.5 transition-opacity",
+          // ظاهرة دائماً على الموبايل أو عند الاختيار (Active)
+          isActive
+            ? "opacity-100"
+            : "opacity-70 md:opacity-0 md:group-hover:opacity-100",
+        ].join(" ")}
+      >
         {onEdit && (
           <button
             type="button"
@@ -92,10 +100,7 @@ export default function TopicItem({
         )}
       </div>
 
-      <AnnotationButton
-        count={annotationCount}
-        onClick={onAnnotationClick}
-      />
+      <AnnotationButton count={annotationCount} onClick={onAnnotationClick} />
     </div>
   );
 }

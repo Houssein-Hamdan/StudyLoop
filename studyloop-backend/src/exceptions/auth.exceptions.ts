@@ -134,11 +134,11 @@ export class QuizGenerationFailedException extends HttpException {
   constructor() {
     super(
       {
-        status: HttpStatus.INTERNAL_SERVER_ERROR,
-        message: 'Failed to generate quiz questions',
-        error: 'Internal Server Error',
+        status: HttpStatus.SERVICE_UNAVAILABLE,
+        message: 'Connection error with the AI service. Please try again later.',
+        error: 'Service Unavailable',
       },
-      HttpStatus.INTERNAL_SERVER_ERROR,
+      HttpStatus.SERVICE_UNAVAILABLE,
     );
   }
 }
@@ -160,11 +160,11 @@ export class SummarizationFailedException extends HttpException {
   constructor() {
     super(
       {
-        status: HttpStatus.INTERNAL_SERVER_ERROR,
-        message: 'Failed to generate summary',
-        error: 'Internal Server Error',
+        status: HttpStatus.SERVICE_UNAVAILABLE,
+        message: 'Connection error with the AI service. Please try again later.',
+        error: 'Service Unavailable',
       },
-      HttpStatus.INTERNAL_SERVER_ERROR,
+      HttpStatus.SERVICE_UNAVAILABLE,
     );
   }
 }
@@ -200,7 +200,7 @@ export class AIResponseFailedException extends HttpException {
     super(
       {
         status: HttpStatus.SERVICE_UNAVAILABLE,
-        message: 'Failed to get response from AI service',
+        message: 'Connection error with the AI service. Please try again later.',
         error: 'Service Unavailable',
       },
       HttpStatus.SERVICE_UNAVAILABLE,

@@ -49,6 +49,8 @@ export function useCreateSummary(containerId: string, lessonId: string) {
     mutationFn: (payload: CreateSummaryPayload) =>
       createSummary(containerId, lessonId, payload),
 
+    retry: 1, 
+
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: summaryKeys.list(containerId, lessonId),
@@ -64,9 +66,13 @@ export function useDeleteSummary(containerId: string, lessonId: string) {
     mutationFn: (summaryId: string) =>
       deleteSummary(containerId, lessonId, summaryId),
 
-    onSuccess: () => {
+    onSuccess: (_, summaryId) => {
       queryClient.invalidateQueries({
         queryKey: summaryKeys.list(containerId, lessonId),
+      });
+
+      queryClient.removeQueries({
+        queryKey: summaryKeys.detail(containerId, lessonId, summaryId),
       });
     },
   });

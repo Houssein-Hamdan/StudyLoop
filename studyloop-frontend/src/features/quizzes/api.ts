@@ -2,6 +2,7 @@ import { apiClient } from "../../lib/api/client";
 
 import type {
   CreateQuizPayload,
+  QuizListResponse,
   QuizResponse,
   SubmitQuizPayload,
   SubmitQuizResponse,
@@ -32,23 +33,27 @@ export async function getQuiz(
   return response.data;
 }
 
-export async function submitQuiz(
+export async function getLessonQuizzes(
   containerId: string,
   lessonId: string,
-  quizId: string,
-  payload: SubmitQuizPayload,
-): Promise<SubmitQuizResponse> {
-  const response = await apiClient.post(
-    `/containers/${containerId}/lessons/${lessonId}/quizzes/${quizId}/submit`,
-    payload,
+): Promise<QuizListResponse> {
+  const response = await apiClient.get(
+    `/containers/${containerId}/lessons/${lessonId}/quizzes`,
   );
 
   return response.data;
 }
 
-export async function getLessonQuizzes(containerId: string, lessonId: string) {
-  const response = await apiClient.get(
-    `/containers/${containerId}/lessons/${lessonId}/quizzes`,
+export async function submitQuiz(
+  containerId: string,
+  lessonId: string,
+  payload: SubmitQuizPayload,
+): Promise<SubmitQuizResponse> {
+  const response = await apiClient.post(
+    `/containers/${containerId}/lessons/${lessonId}/quizzes/${payload.quizId}/submit`,
+    {
+      answers: payload.answers,
+    },
   );
 
   return response.data;

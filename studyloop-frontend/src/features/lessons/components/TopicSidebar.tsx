@@ -1,3 +1,6 @@
+import { useState } from "react";
+import { ChevronDown, Check, Pencil, Trash2 } from "lucide-react";
+
 import type { Annotation } from "../../annotations/types";
 import TopicItem from "./TopicItem";
 import type { Topic } from "../types";
@@ -23,16 +26,20 @@ export default function TopicSidebar({
   onAnnotationClick,
   onAddTopic,
   onEditTopic,
-  onDeleteTopic
+  onDeleteTopic,
 }: TopicSidebarProps) {
+  const [isOpen, setIsOpen] = useState(false);
+
   const completedCount = topics.filter((topic) =>
     completedTopicIds.has(topic.id),
   ).length;
 
+  const activeTopic = topics.find((t) => t.id === activeTopicId);
+
   return (
     <aside className="w-full shrink-0 border-b border-[var(--border)] lg:w-72 lg:border-b-0 lg:border-r">
       <div className="p-4 sm:p-5">
-        {/* Progress Bar (Mobile u Desktop) */}
+        {/* Progress Bar (Mobile & Desktop) */}
         <div className="mb-4">
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-semibold">Topics</h2>
@@ -55,24 +62,85 @@ export default function TopicSidebar({
 
         {/* --- MOBILE VIEW (< md) --- */}
         <div className="space-y-3 md:hidden">
-          <div>
+          <div className="relative">
             <label className="mb-1.5 block text-xs font-medium text-[var(--muted)]">
               Select Topic
             </label>
 
-            <select
-              value={activeTopicId ?? ""}
-              onChange={(e) => onTopicClick(e.target.value)}
-              className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2.5 text-sm outline-none focus:border-[var(--primary)]"
+            {/* Custom Dropdown Button */}
+            <button
+              type="button"
+              onClick={() => setIsOpen((prev) => !prev)}
+              className="flex w-full items-center justify-between rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3.5 py-2.5 text-sm font-medium outline-none transition focus:border-[var(--primary)]"
             >
-              {topics.map((topic) => (
-                <option key={topic.id} value={topic.id}>
-                  {completedTopicIds.has(topic.id) ? "✓ " : ""}
-                  {topic.title}
-                </option>
-              ))}
-            </select>
+              <span className="truncate">
+                {activeTopic ? activeTopic.title : "Select a topic..."}
+              </span>
+              <ChevronDown
+                size={16}
+                className={`shrink-0 text-[var(--muted)] transition-transform duration-200 ${
+                  isOpen ? "rotate-180" : ""
+                }`}
+              />
+            </button>
+
+            {/* Custom Options List */}
+            {isOpen && (
+              <div className="absolute left-0 right-0 z-50 mt-1.5 max-h-60 overflow-y-auto rounded-xl border border-[var(--border)] bg-[var(--surface)] p-1.5 shadow-xl">
+                {topics.map((topic) => {
+                  const isSelected = topic.id === activeTopicId;
+                  const isCompleted = completedTopicIds.has(topic.id);
+
+                  return (
+                    <button
+                      key={topic.id}
+                      type="button"
+                      onClick={() => {
+                        onTopicClick(topic.id);
+                        setIsOpen(false);
+                      }}
+                      className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition ${
+                        isSelected
+                          ? "bg-[var(--primary)]/10 font-medium text-[var(--primary)]"
+                          : "text-[var(--foreground)] hover:bg-[var(--surface-hover)]"
+                      }`}
+                    >
+                      <span className="truncate">{topic.title}</span>
+                      {isCompleted && (
+                        <Check
+                          size={14}
+                          className="shrink-0 text-[var(--success)]"
+                        />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </div>
+
+          {/* Action Buttons for Active Topic on Mobile */}
+          {activeTopic && (
+            <div className="flex items-center gap-2 pt-1">
+              <button
+                type="button"
+                onClick={() => onEditTopic(activeTopic)}
+                className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-medium text-[var(--muted)] transition hover:text-[var(--primary)]"
+              >
+                <Pencil size={13} />
+                Edit Topic
+              </button>
+
+              <button
+                type="button"
+                onClick={() => onDeleteTopic(activeTopic)}
+                className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-medium text-red-500 transition hover:bg-red-500/10"
+              >
+                <Trash2 size={13} />
+                Delete Topic
+              </button>
+            </div>
+          )}
 
           {onAddTopic && (
             <button
