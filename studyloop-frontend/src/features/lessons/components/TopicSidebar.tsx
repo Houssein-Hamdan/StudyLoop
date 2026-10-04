@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronDown, Check, Pencil, Trash2 } from "lucide-react";
+import { ChevronDown, Check, Pencil, Trash2, Plus } from "lucide-react";
 
 import type { Annotation } from "../../annotations/types";
 import TopicItem from "./TopicItem";
@@ -35,6 +35,10 @@ export default function TopicSidebar({
   ).length;
 
   const activeTopic = topics.find((t) => t.id === activeTopicId);
+
+  const activeTopicAnnotationCount = activeTopic
+    ? annotations.filter((a) => a.topicId === activeTopic.id).length
+    : 0;
 
   return (
     <aside className="w-full shrink-0 border-b border-[var(--border)] lg:w-72 lg:border-b-0 lg:border-r">
@@ -119,25 +123,40 @@ export default function TopicSidebar({
             )}
           </div>
 
-          {/* Action Buttons for Active Topic on Mobile */}
+          {/* Action Buttons for Active Topic on Mobile (Edit, Add Note, Delete) */}
           {activeTopic && (
             <div className="flex items-center gap-2 pt-1">
+              {/* Add Note Button */}
+              <button
+                type="button"
+                onClick={() => onAnnotationClick(activeTopic.id)}
+                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-2.5 py-2 text-xs font-medium text-[var(--muted)] transition hover:text-[var(--primary)]"
+              >
+                <Plus size={13} />
+                <span>Note</span>
+                {activeTopicAnnotationCount > 0 && (
+                  <span className="ml-1 rounded-full bg-[var(--primary)]/10 px-1.5 py-0.5 text-[10px] font-semibold text-[var(--primary)]">
+                    {activeTopicAnnotationCount}
+                  </span>
+                )}
+              </button>
+
               <button
                 type="button"
                 onClick={() => onEditTopic(activeTopic)}
-                className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-medium text-[var(--muted)] transition hover:text-[var(--primary)]"
+                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-2.5 py-2 text-xs font-medium text-[var(--muted)] transition hover:text-[var(--primary)]"
               >
                 <Pencil size={13} />
-                Edit Topic
+                Edit
               </button>
 
               <button
                 type="button"
                 onClick={() => onDeleteTopic(activeTopic)}
-                className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-medium text-red-500 transition hover:bg-red-500/10"
+                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-2.5 py-2 text-xs font-medium text-red-500 transition hover:bg-red-500/10"
               >
                 <Trash2 size={13} />
-                Delete Topic
+                Delete
               </button>
             </div>
           )}

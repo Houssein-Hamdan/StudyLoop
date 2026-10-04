@@ -11,6 +11,11 @@ export type CreateLessonPayload = {
   topics?: CreateTopicPayload[];
 };
 
+export type UpdateLessonPayload = {
+  title?: string;
+  rawContent?: string;
+};
+
 export async function createLesson(
   containerId: string,
   payload: CreateLessonPayload,
@@ -18,6 +23,27 @@ export async function createLesson(
   const response = await apiClient.post(
     `/containers/${containerId}/lessons`,
     payload,
+  );
+
+  return response.data;
+}
+
+export async function updateLesson(
+  containerId: string,
+  lessonId: string,
+  payload: UpdateLessonPayload,
+) {
+  const response = await apiClient.put(
+    `/containers/${containerId}/lessons/${lessonId}`,
+    payload,
+  );
+
+  return response.data;
+}
+
+export async function deleteLesson(containerId: string, lessonId: string) {
+  const response = await apiClient.delete(
+    `/containers/${containerId}/lessons/${lessonId}`,
   );
 
   return response.data;
