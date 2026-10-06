@@ -16,7 +16,7 @@ import {
 import { LessonModule } from '../lesson/lesson.module.js';
 import { ContainerModule } from '../container/container.module.js';
 import { AuthModule } from '../auth/auth.module.js';
-import { GeminiModule } from '../gemini/gemini.module.js';
+import { GroqModule } from '../groq/groq.module.js';
 
 @Module({
   imports: [
@@ -24,7 +24,7 @@ import { GeminiModule } from '../gemini/gemini.module.js';
     LessonModule,
     ContainerModule,
     AuthModule,
-    GeminiModule,
+    GroqModule,
   ],
   controllers: [AskController, UserQuestionsController],
   providers: [

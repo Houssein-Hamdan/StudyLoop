@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { Bot, Clock3, MessageCircle, Send, Trash2, User } from "lucide-react";
-
+import { getApiErrorMessage } from "../../../lib/api/apiError";
 import { useLesson } from "../../lessons/hooks/useLessons";
 import {
   useAskQuestion,
@@ -134,7 +134,10 @@ export function AskPage() {
 
         {askMutation.isError && (
           <p className="mt-4 text-sm text-[var(--danger)]">
-            Something went wrong while asking AI.
+            {getApiErrorMessage(
+              askMutation.error,
+              "Something went wrong while asking AI.",
+            )}
           </p>
         )}
       </section>

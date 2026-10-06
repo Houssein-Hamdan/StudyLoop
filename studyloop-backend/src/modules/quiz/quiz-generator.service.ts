@@ -1,11 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import type { Topic } from '../../entities/topic.entity.js';
-import { GeminiService, TopicContext } from '../gemini/gemini.service.js';
+import { GroqService } from '../groq/groq.service.js';
 import { QuizGenerationFailedException } from '../../exceptions/auth.exceptions.js';
 
 export interface GeneratedQuestion {
   questionText: string;
-  format: 'multiple_choice' | 'open_text' | 'fill_blanks' | 'true_false';
+  format:
+    | 'multiple_choice'
+    | 'open_text'
+    | 'fill_blanks'
+    | 'true_false';
   difficulty: 'easy' | 'medium' | 'hard';
   order: number;
   correctAnswer: string;
@@ -14,38 +18,49 @@ export interface GeneratedQuestion {
 
 @Injectable()
 export class QuizGeneratorService {
-  constructor(private readonly geminiService: GeminiService) {}
+  constructor(private readonly groqService: GroqService) {}
 
-  /**
-   * Generate quiz questions using Gemini AI
-   */
   async generateQuestions(
     topics: Topic[],
     difficulty: 'easy' | 'medium' | 'hard',
-    format: 'multiple_choice' | 'open_text' | 'fill_blanks' | 'true_false',
+    format:
+      | 'multiple_choice'
+      | 'open_text'
+      | 'fill_blanks'
+      | 'true_false',
     questionCount: number,
   ): Promise<GeneratedQuestion[]> {
     try {
-      // 1. Validation check
       if (!topics || topics.length === 0 || questionCount <= 0) {
         throw new QuizGenerationFailedException();
       }
 
-      // 2. Map Topic entities to TopicContext
-      const topicContexts: TopicContext[] = topics.map((t) => ({
-        title: t.title,
-        description: t.description ?? '',
-      }));
+      const topicsText = topics
+        .map((t) => `${t.title}: ${t.description || 'N/A'}`)
+        .join('\n');
 
-      // 3. Call Gemini AI Service
-      const rawQuestions = await this.geminiService.generateQuizQuestions(
-        topicContexts,
-        difficulty,
-        format,
-        questionCount,
-      );
+      const prompt = `You are an educational quiz generator.
 
-      // 4. Transform and ensure 'order' property is included
+Generate ${questionCount} ${difficulty} level ${format} quiz questions based on:
+
+${topicsText}
+
+Return ONLY valid JSON.
+The response must be a JSON array.
+
+Each question must have:
+- questionText: string
+- format: "${format}"
+- difficulty: "${difficulty}"
+- correctAnswer: string
+- options: string[] (required only for multiple_choice)
+
+Do not include any explanation outside the JSON.`;
+
+      const rawResponse = await this.groqService.generateText(prompt);
+
+      const rawQuestions = JSON.parse(rawResponse);
+
       if (!Array.isArray(rawQuestions) || rawQuestions.length === 0) {
         throw new QuizGenerationFailedException();
       }

@@ -3,15 +3,17 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { databaseConfig } from './config/database.config.js';
 import { AuthModule } from './modules/auth/auth.module.js';
 import { ContainerModule } from './modules/container/container.module.js';
-import { LessonModule } from './modules/lesson/lesson.module.js';
-import { QuizModule } from './modules/quiz/quiz.module.js';
-import { SummaryModule } from './modules/summary/summary.module.js';
+ import { LessonModule } from './modules/lesson/lesson.module.js';
+ import { QuizModule } from './modules/quiz/quiz.module.js';
+ import { SummaryModule } from './modules/summary/summary.module.js';
 import { ProgressModule } from './modules/progress/progress.module.js';
 import { AskModule } from './modules/ask/ask.module.js';
-import { SearchModule } from './modules/search/search.module.js';
-import { GeminiModule } from './modules/gemini/gemini.module.js';
+ import { SearchModule } from './modules/search/search.module.js';
 import { AnnotationModule } from './modules/annotation/annotation.module.js';
 import { AnalyticsModule } from './modules/analytics/analytics.module.js';
+import { GroqModule } from './modules/groq/groq.module.js';
+import { AppController } from './app.controller.js';
+import { AppService } from './app.service.js';
 @Module({
   imports: [
     TypeOrmModule.forRoot(databaseConfig),
@@ -23,11 +25,11 @@ import { AnalyticsModule } from './modules/analytics/analytics.module.js';
     ProgressModule,
     AskModule,
     SearchModule,
-    GeminiModule,
     AnnotationModule,
     AnalyticsModule,
+    GroqModule
   ],
-  controllers: [],
-  providers: [],
+  controllers: [AppController,],
+  providers: [AppService],
 })
 export class AppModule {}

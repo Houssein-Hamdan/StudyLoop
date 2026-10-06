@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FileText, Sparkles } from "lucide-react";
-
+import { getApiErrorMessage } from "../../../lib/api/apiError";
 import { useParseRawContent } from "../hooks/useLessons";
 
 type ParsedTopic = {
@@ -144,12 +144,13 @@ export function PasteLessonForm({
 
         {/* Parse error */}
         {parseMutation.isError && (
-          <div className="mt-4 rounded-xl border border-[var(--danger)]/30 bg-[var(--danger)]/10 px-4 py-3 text-sm text-[var(--danger)]">
-            {parseMutation.error instanceof Error
-              ? parseMutation.error.message
-              : "Failed to analyze content."}
-          </div>
-        )}
+  <div className="mt-4 rounded-xl border border-[var(--danger)]/30 bg-[var(--danger)]/10 px-4 py-3 text-sm text-[var(--danger)]">
+    {getApiErrorMessage(
+      parseMutation.error,
+      "Failed to analyze content."
+    )}
+  </div>
+)}
       </div>
 
       {/* Parsed topics */}

@@ -9,7 +9,7 @@ import { TOPIC_REPOSITORY } from './repositories/topic.repository.interface.js';
 import { CONTAINER_REPOSITORY } from '../container/repositories/container.repository.interface.js';
 import { PROGRESS_REPOSITORY } from '../progress/repositories/progress.repository.interface.js';
 import { USER_TOPIC_PROGRESS_REPOSITORY } from '../progress/repositories/user-topic-progress.repository.interface.js';
-import { GeminiService } from '../gemini/gemini.service.js';
+import { GroqService } from '../groq/groq.service.js';
 
 import type { ILessonRepository } from './repositories/lesson.repository.interface.js';
 import type { ITopicRepository } from './repositories/topic.repository.interface.js';
@@ -20,6 +20,7 @@ import {
   LessonNotFoundException,
   TopicNotFoundException,
   UnauthorizedLessonAccessException,
+  AIResponseFailedException,
 } from '../../exceptions/auth.exceptions.js';
 
 import { randomUUID } from 'node:crypto';
@@ -42,7 +43,7 @@ export class LessonService {
     @Inject(USER_TOPIC_PROGRESS_REPOSITORY)
     private readonly userTopicProgressRepository: IUserTopicProgressRepository,
 
-    private readonly geminiService: GeminiService,
+    private readonly groqService: GroqService,
   ) {}
 
   /**
@@ -80,11 +81,9 @@ export class LessonService {
     let topicsToSave = topics ?? [];
 
     if (hasRawContent) {
-      const parsed = await this.geminiService.parseUnstructuredText(
-        rawContent!,
-      );
+      const topicsText = await this.parseRawTextWithAI(rawContent!);
 
-      topicsToSave = parsed.map((topic) => ({
+      topicsToSave = topicsText.map((topic: any) => ({
         title: topic.title,
         description: topic.description ?? null,
       }));
@@ -447,6 +446,47 @@ export class LessonService {
     };
   }
 
+  private async parseRawTextWithAI(rawText: string) {
+    const prompt = `You are a text segmentation assistant.
+
+Your ONLY task is to split the provided raw text into logical topics/sections WITHOUT changing, summarizing, rewording, or omitting any words.
+
+CRITICAL RULES:
+1. Preserve the EXACT wording, phrasing, and sentences from the original text in the "description" field.
+2. DO NOT summarize, rephrase, condense, or edit the content.
+3. Every sentence from the original input must appear in one of the topic descriptions in its original order.
+4. Provide a clear, relevant "title" for each identified section.
+5. Process the ENTIRE input text.
+6. Do not stop before all input text has been processed.
+7. Return a COMPLETE and VALID JSON array.
+
+Return ONLY valid JSON.
+
+Each item must have:
+- title: string
+- description: string
+
+Raw Text:
+${rawText}`;
+
+    try {
+      const response = await this.groqService.generateText(prompt);
+      console.log('GROQ RAW RESPONSE:', response);
+
+      const parsed = JSON.parse(response);
+
+      if (!Array.isArray(parsed) || parsed.length === 0) {
+        throw new AIResponseFailedException();
+      }
+
+      return parsed;
+    } catch (error) {
+      console.error('Error parsing raw text with Groq:', error);
+
+      throw new AIResponseFailedException();
+    }
+  }
+
   /**
    * Parse raw text into structured topics
    */
@@ -455,7 +495,7 @@ export class LessonService {
       throw new BadRequestException('Raw content is required');
     }
 
-    const topics = await this.geminiService.parseUnstructuredText(rawContent);
+    const topics = await this.parseRawTextWithAI(rawContent);
 
     return {
       message: 'Raw text parsed successfully',

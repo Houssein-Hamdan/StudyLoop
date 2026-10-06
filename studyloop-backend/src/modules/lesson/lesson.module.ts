@@ -11,7 +11,7 @@ import { LESSON_REPOSITORY } from './repositories/lesson.repository.interface.js
 import { TOPIC_REPOSITORY } from './repositories/topic.repository.interface.js';
 import { ContainerModule } from '../container/container.module.js';
 import { AuthModule } from '../auth/auth.module.js';
-import { GeminiModule } from '../gemini/gemini.module.js';
+import { GroqModule } from '../groq/groq.module.js';
 import { PublicLessonController } from './public-lesson.controller.js';
 import { ProgressModule } from '../progress/progress.module.js';
 
@@ -20,7 +20,7 @@ import { ProgressModule } from '../progress/progress.module.js';
     TypeOrmModule.forFeature([Lesson, Topic]),
     ContainerModule,
     AuthModule,
-    GeminiModule,
+    GroqModule,
     forwardRef(() => ProgressModule),
     ProgressModule
   ],

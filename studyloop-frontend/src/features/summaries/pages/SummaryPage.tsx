@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
-import { AxiosError } from "axios";
-
+import { getApiErrorMessage } from "../../../lib/api/apiError";
 import { FileText, Sparkles } from "lucide-react";
 
 import { useLesson } from "../../lessons/hooks/useLessons";
@@ -73,11 +72,6 @@ export function SummaryPage() {
   }
 
   const generatedSummary = createSummaryMutation.data;
-
-  const apiErrorMessage =
-    createSummaryMutation.error instanceof AxiosError
-      ? createSummaryMutation.error.response?.data?.message
-      : null;
 
   return (
     <div className="mx-auto w-full max-w-4xl">
@@ -200,8 +194,11 @@ export function SummaryPage() {
         )}
 
         {createSummaryMutation.isError && (
-          <div className="mt-5 rounded-xl border border-[var(--danger)]/30 bg-[var(--danger)]/5 px-4 py-3 text-sm text-[var(--danger)]">
-            {apiErrorMessage || "Unable to generate the summary. Please try again."}
+          <div className="mt-5 rounded-xl border border-[var(--danger)]/30 bg-[var(--surface)]/5 px-4 py-3 text-sm text-[var(--danger)]">
+            {getApiErrorMessage(
+              createSummaryMutation.error,
+              "Unable to generate the summary. Please try again.",
+            )}
           </div>
         )}
 

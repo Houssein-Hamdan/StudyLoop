@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import { Check, HelpCircle, Shuffle, Sparkles } from "lucide-react";
 import type { ReactNode } from "react";
-
+import { getApiErrorMessage } from "../../../lib/api/apiError";
 import { useLesson } from "../../lessons/hooks/useLessons";
 import { useCreateQuiz } from "../hooks/useQuizzes";
 
@@ -309,8 +309,11 @@ export function QuizPage() {
       {/* Error */}
 
       {createQuizMutation.isError && (
-        <div className="mt-5 rounded-xl border border-[var(--danger)]/30 bg-[var(--danger)]/5 px-4 py-3 text-sm text-[var(--danger)]">
-          Unable to generate the quiz. Please try again.
+        <div className="mt-5 rounded-xl border border-[var(--danger)]/30 bg-[var(--surface)]/5 px-4 py-3 text-sm text-[var(--danger)]">
+          {getApiErrorMessage(
+            createQuizMutation.error,
+            "Unable to generate the quiz. Please try again.",
+          )}
         </div>
       )}
 

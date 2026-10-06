@@ -1,14 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { Topic } from '../../entities/topic.entity.js';
-import { GeminiService, TopicContext } from '../gemini/gemini.service.js';
+import { GroqService } from '../groq/groq.service.js';
 import { SummarizationFailedException } from '../../exceptions/auth.exceptions.js';
+
+interface TopicContext {
+  title: string;
+  description?: string;
+}
 
 @Injectable()
 export class SummarizationService {
-  constructor(private readonly geminiService: GeminiService) {}
+  constructor(private readonly groqService: GroqService) {}
 
   /**
-   * Generate summary from topics using Gemini AI
+   * Generate summary from topics using AI
    */
   async generateSummary(
     topics: Topic[],
@@ -21,10 +26,24 @@ export class SummarizationService {
 
       const topicContexts: TopicContext[] = topics.map((t) => ({
         title: t.title,
-        description: t.description??'',
+        description: t.description ?? '',
       }));
 
-      return await this.geminiService.generateSummary(topicContexts, depth);
+      const topicsText = topicContexts
+        .map((t) => `${t.title}: ${t.description || 'N/A'}`)
+        .join('\n');
+
+      const prompt = `You are an educational summarizer.
+
+Topics to summarize:
+${topicsText}
+
+Instructions:
+Provide a ${depth} summary.
+NOTE: your answer it must not contain a Bash.
+`;
+
+      return await this.groqService.generateText(prompt);
     } catch (error) {
       if (error instanceof SummarizationFailedException) {
         throw error;

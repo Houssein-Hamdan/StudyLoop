@@ -3,6 +3,7 @@
 > Turn scattered learning material into structured lessons, review it intelligently, test your knowledge, track your progress, and ask AI when you need help.
 
 🔗 **Live Demo:** [StudyLoop](https://study-loop-ten.vercel.app)
+
 📂 **GitHub:** [Houssein-Hamdan/StudyLoop](https://github.com/Houssein-Hamdan/StudyLoop)
 
 ---
@@ -15,15 +16,15 @@
 
 Instead of being another note-taking application, StudyLoop combines:
 
-- 📚 Structured learning
-- 🧩 Topic-level progress tracking
-- 🔄 Spaced repetition
-- 🧠 AI-generated summaries
-- ❓ AI-generated quizzes
-- 💬 Context-aware AI assistance
-- 🖍️ Personal annotations
-- 📊 Learning analytics
-- 🔗 Lesson sharing
+* 📚 Structured learning
+* 🧩 Topic-level progress tracking
+* 🔄 Spaced repetition
+* 🧠 AI-generated summaries
+* ❓ AI-generated quizzes
+* 💬 Context-aware AI assistance
+* 🖍️ Personal annotations
+* 📊 Learning analytics
+* 🔗 Lesson sharing
 
 The core learning loop is:
 
@@ -79,11 +80,11 @@ Progress is tracked at the topic level rather than simply marking an entire less
 
 The system tracks:
 
-- Completed topics
-- Completion percentage
-- Lesson completion
-- Scroll position
-- Review information
+* Completed topics
+* Completion percentage
+* Lesson completion
+* Scroll position
+* Review information
 
 ### 🔄 Spaced Repetition
 
@@ -97,12 +98,12 @@ Users can see lessons due for review and continue their learning cycle.
 
 ### 🧠 AI Learning Tools
 
-StudyLoop integrates Google Gemini to provide:
+StudyLoop integrates **Groq** to provide:
 
-- AI-generated summaries
-- AI-generated quizzes
-- Context-aware AI questions
-- Raw-content processing
+* AI-generated summaries
+* AI-generated quizzes
+* Context-aware AI questions
+* Raw-content processing
 
 AI requests are handled by the backend rather than directly from the browser.
 
@@ -110,16 +111,16 @@ AI requests are handled by the backend rather than directly from the browser.
 
 Quizzes can be generated for:
 
-- Entire lessons
-- Selected topics
-- Random topics
+* Entire lessons
+* Selected topics
+* Random topics
 
 Supported question types include:
 
-- Multiple choice
-- True / False
-- Open text
-- Fill in the blanks
+* Multiple choice
+* True / False
+* Open text
+* Fill in the blanks
 
 Correct answers remain server-side and are only used when evaluating submissions.
 
@@ -127,14 +128,14 @@ Correct answers remain server-side and are only used when evaluating submissions
 
 The dashboard provides an overview of the learner's activity:
 
-- Total lessons
-- Total topics
-- Completed topics
-- Completion rate
-- Lessons in progress
-- Reviews due
-- Quiz statistics
-- Recent activity
+* Total lessons
+* Total topics
+* Completed topics
+* Completion rate
+* Lessons in progress
+* Reviews due
+* Quiz statistics
+* Recent activity
 
 ### 🖍️ Annotations
 
@@ -167,7 +168,7 @@ StudyLoop uses a **React frontend + NestJS modular monolith backend + PostgreSQL
            │
            ▼
 ┌──────────────────────┐
-│     NestJS API       │
+│      NestJS API      │
 │                      │
 │ Auth                 │
 │ Containers           │
@@ -176,7 +177,7 @@ StudyLoop uses a **React frontend + NestJS modular monolith backend + PostgreSQL
 │ Quizzes              │
 │ Summaries            │
 │ Annotations          │
-│ Gemini Integration   │
+│ Groq Integration     │
 └──────────┬───────────┘
            │
            ▼
@@ -198,6 +199,24 @@ PostgreSQL
 ```
 
 The backend is organized as a **modular monolith**, keeping business domains separated without introducing unnecessary microservice complexity.
+
+### AI Integration Flow
+
+```text
+Feature Service
+      ↓
+Prompt Construction
+      ↓
+Groq Service
+      ↓
+Groq API
+      ↓
+AI Response
+      ↓
+Feature Service
+```
+
+The `GroqService` is responsible for communication with the external AI provider, while feature services remain responsible for their own business logic and prompts.
 
 ### Frontend Flow
 
@@ -221,28 +240,29 @@ TanStack Query is used for server-state management, caching, mutations, and quer
 
 ### Frontend
 
-- React
-- TypeScript
-- Vite
-- React Router
-- TanStack Query
-- React Hook Form
-- Zod
-- Tailwind CSS
-- Axios
-- Recharts
-- Lucide React
+* React
+* TypeScript
+* Vite
+* React Router
+* TanStack Query
+* React Hook Form
+* Zod
+* Tailwind CSS
+* Axios
+* Recharts
+* Lucide React
 
 ### Backend
 
-- NestJS
-- TypeScript
-- TypeORM
-- PostgreSQL
-- JWT + Passport
-- bcrypt
-- class-validator
-- Google Gemini API
+* NestJS
+* TypeScript
+* TypeORM
+* PostgreSQL
+* JWT + Passport
+* bcrypt
+* class-validator
+* Groq API
+* `groq-sdk`
 
 ---
 
@@ -292,7 +312,7 @@ NestJS dependency injection keeps modules loosely coupled and improves testabili
 
 ### Server-Side AI
 
-Gemini requests go through the backend to keep API credentials secure and centralize AI prompting, validation, and response handling.
+Groq requests go through the backend to keep API credentials secure and centralize AI prompting, validation, error handling, and response processing.
 
 ### User-Specific Progress
 
@@ -300,7 +320,9 @@ Topic structure and user progress are kept separate:
 
 ```text
 Topic
-  ≠
+
+ ≠
+
 UserTopicProgress
 ```
 
@@ -312,16 +334,16 @@ This allows the same learning structure to remain independent from each user's p
 
 StudyLoop implements:
 
-- JWT authentication
-- Password hashing with bcrypt
-- DTO validation
-- Protected API routes
-- Resource ownership checks
-- User-specific progress
-- Server-side AI credentials
-- Server-side quiz answer validation
-- CORS configuration
-- Bearer-token authentication
+* JWT authentication
+* Password hashing with bcrypt
+* DTO validation
+* Protected API routes
+* Resource ownership checks
+* User-specific progress
+* Server-side AI credentials
+* Server-side quiz answer validation
+* CORS configuration
+* Bearer-token authentication
 
 ---
 
@@ -329,6 +351,7 @@ StudyLoop implements:
 
 ```text
 StudyLoop/
+
 │
 ├── studyloop-frontend/
 │   └── src/
@@ -360,7 +383,7 @@ StudyLoop/
 │       │   ├── quiz/
 │       │   ├── summary/
 │       │   ├── annotation/
-│       │   └── gemini/
+│       │   └── groq/
 │       ├── entities/
 │       ├── config/
 │       └── main.ts
@@ -374,16 +397,17 @@ StudyLoop/
 
 ### Prerequisites
 
-- Node.js
-- npm
-- PostgreSQL
-- Git
-- Gemini API key
+* Node.js
+* npm
+* PostgreSQL
+* Git
+* Groq API key
 
 ### Backend
 
 ```bash
 cd studyloop-backend
+
 npm install
 ```
 
@@ -399,7 +423,9 @@ DATABASE_PASSWORD=your_password
 DATABASE_NAME=studyloop
 
 JWT_SECRET=your_jwt_secret
-GEMINI_API_KEY=your_gemini_api_key
+
+GROQ_API_KEY=your_groq_api_key
+GROQ_MODEL=openai/gpt-oss-120b
 ```
 
 Run:
@@ -412,6 +438,7 @@ npm run start:dev
 
 ```bash
 cd studyloop-frontend
+
 npm install
 ```
 
@@ -455,16 +482,16 @@ npm run dev
 
 ## 🚀 Future Improvements
 
-- More advanced spaced-repetition algorithms
-- Personalized AI learning recommendations
-- Better quiz analytics
-- Advanced search
-- Lesson version history
-- Collaborative lessons
-- Offline learning
-- Mobile application
-- Notification and reminder system
-- Improved content import
+* More advanced spaced-repetition algorithms
+* Personalized AI learning recommendations
+* Better quiz analytics
+* Advanced search
+* Lesson version history
+* Collaborative lessons
+* Offline learning
+* Mobile application
+* Notification and reminder system
+* Improved content import
 
 ---
 
@@ -472,18 +499,18 @@ npm run dev
 
 StudyLoop is an actively developed full-stack project built as a practical exploration of:
 
-- Full-stack development
-- REST API design
-- Database architecture
-- Authentication & authorization
-- Modular architecture
-- Dependency Injection
-- Repository Pattern
-- Server-state management
-- AI integration
-- Progress tracking
-- Spaced repetition
-- Responsive UI
+* Full-stack development
+* REST API design
+* Database architecture
+* Authentication & authorization
+* Modular architecture
+* Dependency Injection
+* Repository Pattern
+* Server-state management
+* AI integration
+* Progress tracking
+* Spaced repetition
+* Responsive UI
 
 The project is built to demonstrate not only feature development, but also **software engineering and architectural thinking**.
 
@@ -493,9 +520,9 @@ The project is built to demonstrate not only feature development, but also **sof
 
 **Hussein Hamdan**
 
-- **GitHub:** [@Houssein-Hamdan](https://github.com/Houssein-Hamdan)
-- **LinkedIn:** [Hussein Hamdan](https://www.linkedin.com/in/hussein-hamdan-04504542b)
-- **Email**: [houssein.hamdn@gmail.com](houssein.hamdn@gmail.com)
+* **GitHub:** [@Houssein-Hamdan](https://github.com/Houssein-Hamdan)
+* **LinkedIn:** [Hussein Hamdan](https://www.linkedin.com/in/hussein-hamdan-04504542b)
+* **Email:** [houssein.hamdn@gmail.com](mailto:houssein.hamdn@gmail.com)
 
 ---
 
