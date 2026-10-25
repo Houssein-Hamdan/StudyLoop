@@ -2,7 +2,11 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Question } from '../../entities/question.entity.js';
 import { QuestionAnswer } from '../../entities/question-answer.entity.js';
-import { AskController, UserQuestionsController } from './ask.controller.js';
+import {
+  AskController,
+  UserQuestionsController,
+  GeneralAskController,
+} from './ask.controller.js';
 import { AskService } from './ask.service.js';
 import { AIService } from './ai.service.js';
 import {
@@ -26,7 +30,7 @@ import { GroqModule } from '../groq/groq.module.js';
     AuthModule,
     GroqModule,
   ],
-  controllers: [AskController, UserQuestionsController],
+  controllers: [AskController, UserQuestionsController, GeneralAskController],
   providers: [
     AskService,
     AIService,

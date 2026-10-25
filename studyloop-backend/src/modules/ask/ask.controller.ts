@@ -11,6 +11,7 @@ import {
 import type { Request as ExpressRequest } from 'express';
 import { AskService } from './ask.service.js';
 import { CreateQuestionDto } from './dto/create-question.dto.js';
+import { GeneralQuestionDto } from './dto/general-question.dto.js';
 import { JwtGuard } from '../auth/guards/jwt.guard.js';
 
 interface AuthenticatedRequest extends ExpressRequest {
@@ -111,5 +112,25 @@ export class UserQuestionsController {
   @Get()
   async getUserQuestions(@Request() req: AuthenticatedRequest) {
     return this.askService.getUserQuestions(req.user.sub);
+  }
+}
+
+@Controller('ask')
+@UseGuards(JwtGuard)
+export class GeneralAskController {
+  constructor(private readonly askService: AskService) {}
+
+  @Post()
+  async askGeneralQuestion(
+    @Body() dto: GeneralQuestionDto,
+  ) {
+    const answer = await this.askService.askGeneralQuestion(
+      dto.questionText,
+    );
+
+    return {
+      message: 'Question answered successfully',
+      answer,
+    };
   }
 }

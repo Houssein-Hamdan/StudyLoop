@@ -238,6 +238,10 @@ export class AskService {
     };
   }
 
+  async askGeneralQuestion(questionText: string): Promise<string> {
+    return this.aiService.generateGeneralResponse(questionText);
+  }
+
   private formatQuestion(question: any) {
     return {
       id: question.id,

@@ -38,4 +38,31 @@ Provide a clear, simple, concise (2-3 paragraphs max) answer with examples if ap
       throw new AIResponseFailedException();
     }
   }
+
+  async generateGeneralResponse(questionText: string): Promise<string> {
+    try {
+      if (!questionText || !questionText.trim()) {
+        throw new AIResponseFailedException();
+      }
+
+      const prompt = `You are a helpful educational AI tutor.
+
+Student Question: "${questionText.trim()}"
+
+Provide a clear, simple, concise answer.
+Use examples when helpful.
+Explain technical concepts step by step when necessary.
+Keep the answer focused on the student's question.
+Do not include Bash commands or scripts unless the student explicitly asks for them.
+`;
+
+      return await this.groqService.generateText(prompt);
+    } catch (error) {
+      if (error instanceof AIResponseFailedException) {
+        throw error;
+      }
+
+      throw new AIResponseFailedException();
+    }
+  }
 }
