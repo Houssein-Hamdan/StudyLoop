@@ -9,30 +9,30 @@ There is a need for a simple platform that helps learners:
     • Easily access their learning materials from different devices.
     • Ask questions about information they have forgotten.
     • Share lessons and learning progress with friends.
-Target User
+**Target User**
 A learner who wants to store, review, and retain what they are learning over time.
 
 
 
 **Functional Requirements**
 The system should allow users to:
-    1. Authentication
+    1. *Authentication*
         ○ Register an account.
         ○ Log in and log out.
-    2. Learning Content
+    2. *Learning Content*
         ○ Add and save lessons.
         ○ Organize lessons into containers/categories.
         ○ Edit and delete saved lessons.
         ○ View previously saved lessons.
-    3. Review
+    3. *Review*
         ○ Review saved lessons easily.
         ○ Track which lessons have been reviewed.
         ○ Track learning and review progress.
         ○ Know what needs to be reviewed.
-    4. Summarization
+    4. *Summarization*
         ○ Generate or create a summary of a lesson.
         ○ Review the summary instead of going through the entire lesson when appropriate.
-    5. Quizzes
+    5. *Quizzes*
         ○ Generate or take quizzes based on learned material.
         ○ Answer questions and receive results.
         ○ Use quizzes to reinforce previously learned information.
