@@ -1,4 +1,4 @@
-Problem
+**Problem**
 Learners often forget information they have previously studied because they do not have a structured way to store, review, and reinforce what they have learned.
 There is a need for a simple platform that helps learners:
     • Store what they have learned in an organized way.
@@ -14,7 +14,7 @@ A learner who wants to store, review, and retain what they are learning over tim
 
 
 
-Functional Requirements
+**Functional Requirements**
 The system should allow users to:
     1. Authentication
         ○ Register an account.
