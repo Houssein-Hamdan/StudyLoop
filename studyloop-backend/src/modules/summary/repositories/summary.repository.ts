@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Summary } from '../../../entities/summary.entity.js';
+import { Summary , SummaryDepth } from '../../../entities/summary.entity.js';
 import { ISummaryRepository } from './summary.repository.interface.js';
 
 @Injectable()
@@ -24,12 +24,27 @@ export class SummaryRepository implements ISummaryRepository {
 
   async findByLessonIdAndDepth(
     lessonId: string,
-    depth: any,
+    depth: SummaryDepth,
+    selectedTopicIds?: string[],
   ): Promise<Summary | null> {
-    return this.repository.findOne({
+    const summaries = await this.repository.find({
       where: { lessonId, depth },
       order: { createdAt: 'DESC' },
     });
+
+    const requestedIds = [...(selectedTopicIds ?? [])].sort();
+
+    return (
+      summaries.find((summary) => {
+        const savedIds: string[] = summary.selectedTopicIds
+          ? JSON.parse(summary.selectedTopicIds)
+          : [];
+
+        return (
+          JSON.stringify([...savedIds].sort()) === JSON.stringify(requestedIds)
+        );
+      }) ?? null
+    );
   }
 
   async create(summary: Partial<Summary>): Promise<Summary> {

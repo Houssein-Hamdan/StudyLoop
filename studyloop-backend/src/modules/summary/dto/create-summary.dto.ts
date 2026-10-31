@@ -1,4 +1,11 @@
-import { IsNotEmpty, IsEnum, IsArray, IsOptional, IsUUID } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsEnum,
+  IsArray,
+  IsOptional,
+  IsUUID,
+  ArrayNotEmpty,
+} from 'class-validator';
 
 export enum SummaryDepth {
   SHORT = 'short',
@@ -12,6 +19,7 @@ export class CreateSummaryDto {
   depth: SummaryDepth;
 
   @IsArray()
+  @ArrayNotEmpty()
   @IsOptional()
   @IsUUID('4', { each: true })
   selectedTopicIds?: string[];

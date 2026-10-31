@@ -78,6 +78,7 @@ export class SummaryService {
     const existingSummary = await this.summaryRepository.findByLessonIdAndDepth(
       lessonId,
       createSummaryDto.depth,
+      createSummaryDto.selectedTopicIds,
     );
 
     if (existingSummary) {
